@@ -1,0 +1,11 @@
+{
+  "search_placeholder": "Buscar ciudad...",
+  "change_unit": "Cambiar a °F",
+  "dark_mode": "Modo Oscuro",
+  "light_mode": "Modo Claro",
+  "temperature": "Temperatura",
+  "feels_like": "Sensación térmica",
+  "max_temp": "Temp Máxima",
+  "min_temp": "Temp Mínima",
+  "humidity": "Humedad"
+}

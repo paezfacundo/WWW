@@ -1,0 +1,11 @@
+{
+  "search_placeholder": "Search city...",
+  "change_unit": "Switch to °C",
+  "dark_mode": "Dark Mode",
+  "light_mode": "Light Mode",
+  "temperature": "Temperature",
+  "feels_like": "Feels like",
+  "max_temp": "Max Temp",
+  "min_temp": "Min Temp",
+  "humidity": "Humidity"
+}

@@ -1,3 +1,4 @@
+// WeatherDay.js
 import React from 'react';
 import Lottie from 'lottie-react';
 import clear from '../animations/clear.json';
@@ -5,6 +6,7 @@ import cloudy from '../animations/cloudy.json';
 import rain from '../animations/rain.json';
 import snow from '../animations/snow.json';
 import thunderstorm from '../animations/thunderstorm.json';
+import { useLang } from '../hooks/useLang'; // ✅ Importar el hook
 
 const getWeatherAnimation = (main) => {
   switch (main) {
@@ -17,21 +19,30 @@ const getWeatherAnimation = (main) => {
   }
 };
 
-const WeatherDay = ({ data }) => {
+const WeatherDay = ({ data, unit, lang }) => {
+  const translations = useLang(lang);
+  const t = (key) => translations[key];
+
   const { main, weather, dt_txt } = data;
   const anim = getWeatherAnimation(weather[0].main);
-  const date = new Date(dt_txt).toLocaleDateString('es-ES', { weekday: 'long' });
+
+  const date = new Date(dt_txt).toLocaleDateString(
+    lang === "en" ? "en-US" : "es-ES",
+    { weekday: "long" }
+  );
 
   return (
     <div style={{ background: "rgba(0,0,0,0.3)", padding: "20px", borderRadius: "10px", width: "30%" }}>
       <h3>{date}</h3>
-      <Lottie animationData={anim} style={{ height: 150 }} />
-      <p>Temperatura: {main.temp} °C</p>
-      <p>Sensación térmica: {main.feels_like} °C</p>
-      <p>Humedad: {main.humidity}%</p>
-      <p>Mínima: {main.temp_min} °C / Máxima: {main.temp_max} °C</p>
+      <Lottie animationData={anim} loop={true} style={{ height: 100 }} />
+      <p>{t("temperature")}: {main.temp}°{unit === "metric" ? "C" : "F"}</p>
+      <p>{t("feels_like")}: {data.main.feels_like.toFixed(1)}°{unit === "metric" ? "C" : "F"}</p>
+      <p>{t("max_temp")}: {data.main.temp_max.toFixed(1)}°{unit === "metric" ? "C" : "F"}</p>
+      <p>{t("min_temp")}: {data.main.temp_min.toFixed(1)}°{unit === "metric" ? "C" : "F"}</p>
+      <p>{t("humidity")}: {main.humidity}%</p>
     </div>
   );
 };
 
 export default WeatherDay;
+
