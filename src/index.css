@@ -2,12 +2,31 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-.App.dark {
-  background-color: #121212;
-  color: #f0f0f0;
+/* Fondos por clima */
+.sunny-bg {
+  background: linear-gradient(to top, #fceabb, #f8b500);
+}
+.cloudy-bg {
+  background: linear-gradient(to top, #bdc3c7, #2c3e50);
+}
+.rainy-bg {
+  background: linear-gradient(to top, #4e54c8, #8f94fb);
+}
+.stormy-bg {
+  background: linear-gradient(to top, #232526, #414345);
+}
+.snowy-bg {
+  background: linear-gradient(to top, #e6dada, #274046);
+}
+.default-bg {
+  background: linear-gradient(to top, #89f7fe, #66a6ff);
 }
 
 .App {
-  background-color: #ffffff;
-  color: #222222;
+  transition: background 1s ease;
+  color: white;
+}
+
+.dark {
+  color: black;
 }

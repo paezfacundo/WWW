@@ -7,5 +7,6 @@
   "feels_like": "Feels like",
   "max_temp": "Max Temp",
   "min_temp": "Min Temp",
-  "humidity": "Humidity"
+  "humidity": "Humidity",
+  "go_to_my_location": "Go to my location"
 }

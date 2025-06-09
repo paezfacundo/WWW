@@ -7,5 +7,6 @@
   "feels_like": "Sensación térmica",
   "max_temp": "Temp Máxima",
   "min_temp": "Temp Mínima",
-  "humidity": "Humedad"
+  "humidity": "Humedad",
+  "go_to_my_location": "Ir a mi ubicación"
 }

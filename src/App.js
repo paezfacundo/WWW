@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import WeatherDay from "./components/WeatherDay";
 import { useLang } from "./hooks/useLang";
+import { getUserLocation } from "./utils/getLocation"; // ✅ nueva importación
 import "./index.css";
 
 const API_KEY = "00511df8e916a246bbd6ced86495ee44";
@@ -20,15 +21,21 @@ function App() {
     if (location) {
       fetchWeather(location);
     } else {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude } = position.coords;
-        const res = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`
-        );
-        const data = await res.json();
-        const autoCity = data.name;
-        setLocation(autoCity);
-      });
+      getUserLocation()
+        .then(async ({ lat, lon }) => {
+          const res = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&lang=${lang}`
+          );
+          const data = await res.json();
+          const autoCity = data.name;
+          setLocation(autoCity);
+        })
+        .catch((error) => {
+          console.error("Error de geolocalización:", error);
+          alert(lang === "es"
+            ? "No se pudo obtener tu ubicación automáticamente."
+            : "Could not detect your location automatically.");
+        });
     }
   }, []);
 
@@ -48,10 +55,13 @@ function App() {
       setWeatherData({
         city: response.data.city.name + ", " + response.data.city.country,
         forecast,
-      });
+        weatherMain: forecast[0].weather[0].main, // <-- Nuevo
+      });      
       localStorage.setItem("location", loc);
     } catch (error) {
-      alert("No se pudo obtener el clima. Verifica el nombre del lugar.");
+      alert(lang === "es"
+        ? "No se pudo obtener el clima. Verifica el nombre del lugar."
+        : "Couldn't fetch the weather. Check the location name.");
     }
   };
 
@@ -77,8 +87,44 @@ function App() {
     setDarkMode((prev) => !prev);
   };
 
+  const handleGeolocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const res = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`
+          );
+          const data = await res.json();
+          const autoCity = data.name;
+          setLocation(autoCity);
+        } catch (error) {
+          alert(lang === "es"
+            ? "No se pudo obtener tu ubicación actual."
+            : "Could not fetch your current location.");
+        }
+      },
+      () => {
+        alert(lang === "es"
+          ? "No se pudo acceder a tu ubicación."
+          : "Could not access your location.");
+      }
+    );
+  };  
+
+  const getBackgroundClass = () => {
+    if (!weatherData) return "default-bg";
+    const weather = weatherData.weatherMain.toLowerCase();
+    if (weather.includes("cloud")) return "cloudy-bg";
+    if (weather.includes("rain") || weather.includes("drizzle")) return "rainy-bg";
+    if (weather.includes("thunderstorm")) return "stormy-bg";
+    if (weather.includes("snow")) return "snowy-bg";
+    if (weather.includes("clear")) return "sunny-bg";
+    return "default-bg";
+  };  
+
   return (
-    <div className={`App ${darkMode ? "dark" : ""}`}>
+    <div className={`App ${darkMode ? "dark" : ""} ${getBackgroundClass()}`}>
       <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "15px" }}>
         <button onClick={toggleUnit}>
           {unit === "metric" ? t.change_unit : (lang === "es" ? "Cambiar a °C" : "Switch to °C")}
@@ -88,6 +134,9 @@ function App() {
         </button>
         <button onClick={toggleDarkMode}>
           {darkMode ? t.light_mode : t.dark_mode}
+        </button>
+        <button onClick={handleGeolocation}>
+          {t.go_to_my_location}
         </button>
       </div>
 
@@ -101,7 +150,7 @@ function App() {
       </form>
 
       {weatherData && <h1>{(lang === "es" ? "Clima en" : "Weather in")} {weatherData.city}</h1>}
-      
+
       {weatherData && weatherData.forecast && (
         <div style={{ display: "flex", justifyContent: "space-around" }}>
           {weatherData.forecast.map((data, i) => (
