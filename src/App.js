@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import WeatherDay from "./components/WeatherDay";
 import { useLang } from "./hooks/useLang";
-import { getUserLocation } from "./utils/getLocation"; // ✅ nueva importación
+import { getUserLocation } from "./utils/getLocation";
+import { useWeatherSound } from "./hooks/useWeatherSound";
 import "./index.css";
 
 const API_KEY = "00511df8e916a246bbd6ced86495ee44";
@@ -14,8 +15,11 @@ function App() {
   const [unit, setUnit] = useState(localStorage.getItem("unit") || "metric");
   const [lang, setLang] = useState(localStorage.getItem("lang") || "es");
   const [darkMode, setDarkMode] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(false);
 
   const t = useLang(lang);
+  useWeatherSound(soundEnabled ? weatherData?.weatherMain : null);
+
 
   useEffect(() => {
     if (location) {
@@ -55,7 +59,7 @@ function App() {
       setWeatherData({
         city: response.data.city.name + ", " + response.data.city.country,
         forecast,
-        weatherMain: forecast[0].weather[0].main, // <-- Nuevo
+        weatherMain: forecast[0].weather[0].main,
       });      
       localStorage.setItem("location", loc);
     } catch (error) {
@@ -125,7 +129,7 @@ function App() {
 
   return (
     <div className={`App ${darkMode ? "dark" : ""} ${getBackgroundClass()}`}>
-      <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "15px" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
         <button onClick={toggleUnit}>
           {unit === "metric" ? t.change_unit : (lang === "es" ? "Cambiar a °C" : "Switch to °C")}
         </button>
@@ -137,6 +141,9 @@ function App() {
         </button>
         <button onClick={handleGeolocation}>
           {t.go_to_my_location}
+        </button>
+        <button onClick={() => setSoundEnabled(prev => !prev)}>
+          {soundEnabled ? t.disable_sound : t.enable_sound}
         </button>
       </div>
 

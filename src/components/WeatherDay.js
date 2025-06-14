@@ -6,7 +6,7 @@ import cloudy from '../animations/cloudy.json';
 import rain from '../animations/rain.json';
 import snow from '../animations/snow.json';
 import thunderstorm from '../animations/thunderstorm.json';
-import { useLang } from '../hooks/useLang'; // ✅ Importar el hook
+import { useLang } from '../hooks/useLang';
 
 const getWeatherAnimation = (main) => {
   switch (main) {

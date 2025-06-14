@@ -1,5 +1,6 @@
 body {
   transition: background 0.3s ease, color 0.3s ease;
+  margin: 0;
 }
 
 /* Fondos por clima */
@@ -24,9 +25,38 @@ body {
 
 .App {
   transition: background 1s ease;
+  min-height: 100vh;
   color: white;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .dark {
   color: black;
+}
+
+/* Estilo general flejado */
+@media (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+}
+
+/* Tarjetas de clima responsivas */
+.weather-card-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.weather-card-group > div {
+  flex: 1 1 30%;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  .weather-card-group > div {
+    flex: 1 1 80%;
+  }
 }

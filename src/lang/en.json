@@ -8,5 +8,7 @@
   "max_temp": "Max Temp",
   "min_temp": "Min Temp",
   "humidity": "Humidity",
-  "go_to_my_location": "Go to my location"
+  "go_to_my_location": "Go to my location",
+  "enable_sound": "🔊 Enable sound",
+  "disable_sound": "🔇 Disable sound"
 }

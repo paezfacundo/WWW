@@ -8,5 +8,7 @@
   "max_temp": "Temp Máxima",
   "min_temp": "Temp Mínima",
   "humidity": "Humedad",
-  "go_to_my_location": "Ir a mi ubicación"
+  "go_to_my_location": "Ir a mi ubicación",
+  "enable_sound": "🔊 Activar sonido",
+  "disable_sound": "🔇 Desactivar sonido" 
 }
