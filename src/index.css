@@ -25,14 +25,147 @@ body {
 
 .App {
   transition: background 1s ease;
-  min-height: 100vh;
+  height: 100vh;
   color: white;
   padding: 20px;
   box-sizing: border-box;
 }
 
 .dark {
+  color: white;
+}
+
+.weather-card,
+.app-container {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* CONTENEDOR CENTRAL */
+/* ===== TEMA CLARO (default) ===== */
+
+.app-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 20px;
+  background-color: white;
   color: black;
+  transition: all 0.3s ease;
+}
+
+/* ===== TEMA OSCURO ===== */
+
+.App.dark .app-container {
+  background-color: black;
+  color: white;
+}
+
+/* SETTINGS */
+.settings-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.settings-button {
+  font-size: 26px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+}
+
+.settings-button.rotate {
+  transform: rotate(180deg);
+}
+
+.settings-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 150px;
+  z-index: 10;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* TOGGLE SWITCH */
+
+.toggle-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.705);
+}
+
+.toggle-switch {
+  width: 50px;
+  height: 26px;
+  background: #ccc;
+  border-radius: 50px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.toggle-switch.active {
+  background: #4cafef;
+}
+
+.toggle-circle {
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease;
+}
+
+.toggle-switch.active .toggle-circle {
+  transform: translateX(24px);
+}
+
+/* BUSCADOR */
+.search-form {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* CARDS */
+.weather-cards {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+/* ===== TEMA CLARO ===== */
+
+.weather-card {
+  background-color: white;
+  color: black;
+  padding: 20px;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+/* ===== TEMA OSCURO ===== */
+
+.App.dark .weather-card {
+  background-color: black;
+  color: white;
 }
 
 /* Estilo general flejado */

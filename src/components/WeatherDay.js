@@ -32,7 +32,7 @@ const WeatherDay = ({ data, unit, lang }) => {
   );
 
   return (
-    <div style={{ background: "rgba(0,0,0,0.3)", padding: "20px", borderRadius: "10px", width: "30%" }}>
+    <div className='weather-card'>
       <h3>{date}</h3>
       <Lottie animationData={anim} loop={true} style={{ height: 100 }} />
       <p>{t("temperature")}: {main.temp}°{unit === "metric" ? "C" : "F"}</p>

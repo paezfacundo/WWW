@@ -16,6 +16,7 @@ function App() {
   const [lang, setLang] = useState(localStorage.getItem("lang") || "es");
   const [darkMode, setDarkMode] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const t = useLang(lang);
   useWeatherSound(soundEnabled ? weatherData?.weatherMain : null);
@@ -128,44 +129,109 @@ function App() {
   };  
 
   return (
-    <div className={`App ${darkMode ? "dark" : ""} ${getBackgroundClass()}`}>
-      <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-        <button onClick={toggleUnit}>
-          {unit === "metric" ? t.change_unit : (lang === "es" ? "Cambiar a °C" : "Switch to °C")}
-        </button>
-        <button onClick={toggleLang}>
-          {lang === "es" ? "EN" : "ES"}
-        </button>
-        <button onClick={toggleDarkMode}>
-          {darkMode ? t.light_mode : t.dark_mode}
-        </button>
+<div className={`App ${darkMode ? "dark" : ""} ${getBackgroundClass()}`}>
+
+<div className="app-container">
+
+  {/* SETTINGS */}
+  <div className="settings-wrapper">
+    <button 
+      className={`settings-button ${showSettings ? "rotate" : ""}`}
+      onClick={() => setShowSettings(prev => !prev)}
+    >
+      ⚙️
+    </button>
+
+    {showSettings && (
+      <div className="settings-menu">
+        <div className="toggle-group">
+          <span>°C</span>
+          <div 
+            className={`toggle-switch ${unit === "imperial" ? "active" : ""}`}
+            onClick={toggleUnit}
+          >
+            <div className="toggle-circle"></div>
+          </div>
+          <span>°F</span>
+        </div>
+
+        <div className="toggle-group">
+          <span>ES</span>
+          <div 
+            className={`toggle-switch ${lang === "en" ? "active" : ""}`}
+            onClick={toggleLang}
+          >
+            <div className="toggle-circle"></div>
+          </div>
+          <span>EN</span>
+        </div>
+
+        <div className="toggle-group">
+          <span>☀️</span>
+          <div 
+            className={`toggle-switch ${darkMode ? "active" : ""}`}
+            onClick={toggleDarkMode}
+          >
+            <div className="toggle-circle"></div>
+          </div>
+          <span>🌙</span>
+        </div>
+
+        <div className="toggle-group">
+          <span>🔊</span>
+          <div 
+            className={`toggle-switch ${soundEnabled ? "active" : ""}`}
+            onClick={() => setSoundEnabled(prev => !prev)}
+          >
+            <div className="toggle-circle"></div>
+          </div>
+          <span>🔇</span>
+        </div>
+
         <button onClick={handleGeolocation}>
           {t.go_to_my_location}
         </button>
-        <button onClick={() => setSoundEnabled(prev => !prev)}>
-          {soundEnabled ? t.disable_sound : t.enable_sound}
-        </button>
+
       </div>
+    )}
+  </div>
 
-      <form onSubmit={handleSearch} style={{ textAlign: "center", margin: "20px" }}>
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder={t.search_placeholder}
+  {/* BUSCADOR */}
+  <form onSubmit={handleSearch} className="search-form">
+    <input
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      placeholder={t.search_placeholder}
+    />
+    <button type="submit">
+      {lang === "es" ? "Buscar" : "Search"}
+    </button>
+  </form>
+
+  {/* TÍTULO */}
+  {weatherData && (
+    <h1>
+      {(lang === "es" ? "Clima en" : "Weather in")} {weatherData.city}
+    </h1>
+  )}
+
+  {/* CARDS */}
+  {weatherData?.forecast && (
+    <div className="weather-cards">
+      {weatherData.forecast.map((data, i) => (
+        <WeatherDay
+          key={i}
+          data={data}
+          unit={unit}
+          t={t}
+          lang={lang}
         />
-        <button type="submit">{lang === "es" ? "Buscar" : "Search"}</button>
-      </form>
-
-      {weatherData && <h1>{(lang === "es" ? "Clima en" : "Weather in")} {weatherData.city}</h1>}
-
-      {weatherData && weatherData.forecast && (
-        <div style={{ display: "flex", justifyContent: "space-around" }}>
-          {weatherData.forecast.map((data, i) => (
-            <WeatherDay key={i} data={data} unit={unit} t={t} lang={lang} />
-          ))}
-        </div>
-      )}
+      ))}
     </div>
+  )}
+
+</div>
+</div>
   );
 }
 
