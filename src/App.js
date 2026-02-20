@@ -178,14 +178,14 @@ function App() {
         </div>
 
         <div className="toggle-group">
-          <span>🔊</span>
+          <span>🔇</span>
           <div 
             className={`toggle-switch ${soundEnabled ? "active" : ""}`}
             onClick={() => setSoundEnabled(prev => !prev)}
           >
             <div className="toggle-circle"></div>
           </div>
-          <span>🔇</span>
+          <span>🔊</span>
         </div>
 
         <button onClick={handleGeolocation}>
