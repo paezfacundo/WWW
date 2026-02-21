@@ -188,8 +188,24 @@ function App() {
           <span>🔊</span>
         </div>
 
-        <button onClick={handleGeolocation}>
-          {t.go_to_my_location}
+        <button className="location-btn" onClick={handleGeolocation}>
+          <span className="location-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="18"
+              viewBox="0 0 24 24"
+              width="18"
+              fill="currentColor"
+            >
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 
+              9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 
+              6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 
+              11.5 12 11.5z"/>
+            </svg>
+          </span>
+          <span className="location-text">
+            {lang === "es" ? "Mi ubicación" : "My location"}
+          </span>
         </button>
 
       </div>
@@ -197,14 +213,16 @@ function App() {
   </div>
 
   {/* BUSCADOR */}
-  <form onSubmit={handleSearch} className="search-form">
+  <form onSubmit={handleSearch} className="search-box">
     <input
+      type="text"
+      className="search-txt"
+      placeholder={t.search_placeholder}
       value={input}
       onChange={(e) => setInput(e.target.value)}
-      placeholder={t.search_placeholder}
     />
-    <button type="submit">
-      {lang === "es" ? "Buscar" : "Search"}
+    <button type="submit" className="search-btn">
+      🔍
     </button>
   </form>
 
