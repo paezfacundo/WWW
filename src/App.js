@@ -28,18 +28,15 @@ function App() {
     } else {
       getUserLocation()
         .then(async ({ lat, lon }) => {
-          const res = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&lang=${lang}`
-          );
-          const data = await res.json();
-          const autoCity = data.name;
-          setLocation(autoCity);
+          fetchWeather({ lat, lon });
         })
         .catch((error) => {
           console.error("Error de geolocalización:", error);
-          alert(lang === "es"
-            ? "No se pudo obtener tu ubicación automáticamente."
-            : "Could not detect your location automatically.");
+          alert(
+            lang === "es"
+              ? "No se pudo obtener tu ubicación automáticamente."
+              : "Could not detect your location automatically."
+          );
         });
     }
   }, []);
@@ -50,23 +47,72 @@ function App() {
     }
   }, [location, unit, lang]);
 
-  const fetchWeather = async (loc) => {
+  const fetchWeather = async (params) => {
     try {
+      let lat, lon;
+      let cityName = "";
+      let stateName = "";
+      let countryName = "";
+  
+      if (params.lat && params.lon) {
+        // Si ya vienen coordenadas
+        lat = params.lat;
+        lon = params.lon;
+  
+        // Reverse geocoding para obtener detalles
+        const geoRes = await fetch(
+          `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`
+        );
+  
+        const geoData = await geoRes.json();
+        const place = geoData[0];
+  
+        cityName = place.name;
+        stateName = place.state || "";
+        countryName = place.country;
+      } else {
+        // Si viene nombre de ciudad (buscador)
+        const geoRes = await fetch(
+          `https://api.openweathermap.org/geo/1.0/direct?q=${params}&limit=1&appid=${API_KEY}`
+        );
+  
+        const geoData = await geoRes.json();
+  
+        if (!geoData.length) {
+          throw new Error("Lugar no encontrado");
+        }
+  
+        const place = geoData[0];
+  
+        lat = place.lat;
+        lon = place.lon;
+        cityName = place.name;
+        stateName = place.state || "";
+        countryName = place.country;
+  
+        localStorage.setItem("location", params);
+      }
+  
+      // Ahora pedimos clima SIEMPRE por coordenadas
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${loc}&units=${unit}&cnt=24&lang=${lang}&appid=${API_KEY}`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${unit}&cnt=24&lang=${lang}&appid=${API_KEY}`
       );
+  
       const list = response.data.list;
       const forecast = [list[0], list[8], list[16]];
+  
       setWeatherData({
-        city: response.data.city.name + ", " + response.data.city.country,
+        city: `${cityName}${stateName ? ", " + stateName : ""}, ${countryName}`,
         forecast,
         weatherMain: forecast[0].weather[0].main,
-      });      
-      localStorage.setItem("location", loc);
+      });
+  
     } catch (error) {
-      alert(lang === "es"
-        ? "No se pudo obtener el clima. Verifica el nombre del lugar."
-        : "Couldn't fetch the weather. Check the location name.");
+      alert(
+        lang === "es"
+          ? "No se pudo obtener el clima. Verifica el nombre del lugar."
+          : "Couldn't fetch the weather. Check the location name."
+      );
     }
   };
 
@@ -96,26 +142,41 @@ function App() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
+  
         try {
-          const res = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`
+          // 1️⃣ Reverse Geocoding
+          const geoRes = await fetch(
+            `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
           );
-          const data = await res.json();
-          const autoCity = data.name;
-          setLocation(autoCity);
+  
+          const geoData = await geoRes.json();
+          const place = geoData[0];
+  
+          // 2️⃣ Fetch clima usando SIEMPRE coordenadas
+          await fetchWeather({ lat: latitude, lon: longitude });
+  
+          // 3️⃣ Guardamos ubicación detallada
+          setWeatherData((prev) => ({
+            ...prev,
+            city: `${place.name}${place.state ? ", " + place.state : ""}, ${place.country}`,
+          }));
         } catch (error) {
-          alert(lang === "es"
-            ? "No se pudo obtener tu ubicación actual."
-            : "Could not fetch your current location.");
+          alert(
+            lang === "es"
+              ? "No se pudo obtener tu ubicación actual."
+              : "Could not fetch your current location."
+          );
         }
       },
       () => {
-        alert(lang === "es"
-          ? "No se pudo acceder a tu ubicación."
-          : "Could not access your location.");
+        alert(
+          lang === "es"
+            ? "No se pudo acceder a tu ubicación."
+            : "Could not access your location."
+        );
       }
     );
-  };  
+  };
 
   const getBackgroundClass = () => {
     if (!weatherData) return "default-bg";
